@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
 		enableEdgeToEdge()
 		setContent {
 			makeBirdFly(Bird())
-
 			makeBirdFly(Pigeon())
 			TimaTheme {
 				Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
