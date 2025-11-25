@@ -1,6 +1,5 @@
 package com.example.tima
 
-import android.content.Context
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -14,21 +13,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+	navController: NavController,
+	viewModel: MyViewModel
+) {
 	val activity = LocalActivity.current
-	val context = LocalContext.current
-	val preferenceManager = PreferenceManager.getInstance(context)
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
@@ -55,7 +52,7 @@ fun HomeScreen(navController: NavController) {
 			}
 			Spacer(modifier = Modifier.height(24.dp))
 			ElevatedButton(onClick = {
-				preferenceManager.clear()
+				viewModel.onIntent(LoginIntent.Clear)
 				navController.navigate("login") {
 					popUpTo(0)
 				}

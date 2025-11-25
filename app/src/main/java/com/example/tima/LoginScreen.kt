@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,18 +23,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 @Composable
-fun LoginScreen(navController: NavController) {
-	val context = LocalContext.current
-	val viewModel: MyViewModel = viewModel(factory = MyViewModelFactory(context))
-	val state by viewModel.state.collectAsState()
-
-
+fun LoginScreen(
+	navController: NavController,
+	viewModel: MyViewModel,
+	state: ScreenState
+) {
 	RegisterContent(
 		email = state.email,
 		password = state.password,
@@ -68,7 +64,7 @@ fun RegisterContent(
 			value = email,
 			onValueChange = { email ->
 				viewModel.onIntent(LoginIntent.EmailChanged(email))
-				if (email.isNotEmpty()){
+				if (email.isNotEmpty()) {
 					visibleEmail = false
 				}
 			},
@@ -94,7 +90,7 @@ fun RegisterContent(
 			value = password,
 			onValueChange = { password ->
 				viewModel.onIntent(LoginIntent.PasswordChanged(password))
-				if (password.isNotEmpty()){
+				if (password.isNotEmpty()) {
 					visiblePassword = false
 				}
 			},
@@ -116,14 +112,14 @@ fun RegisterContent(
 		Button(onClick = {
 			viewModel.onIntent(LoginIntent.Register)
 			if (email.isNotEmpty() && password.isNotEmpty()) {
-				navController.navigate("home"){
+				navController.navigate("home") {
 					popUpTo(0)
 				}
 			}
-			if (email.isEmpty()){
+			if (email.isEmpty()) {
 				visibleEmail = true
 			}
-			if (password.isEmpty()){
+			if (password.isEmpty()) {
 				visiblePassword = true
 			}
 

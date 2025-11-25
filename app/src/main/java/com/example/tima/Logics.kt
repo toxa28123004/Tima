@@ -8,6 +8,7 @@ sealed class LoginIntent {
 	data class EmailChanged(val email: String) : LoginIntent()
 	data class PasswordChanged(val password: String) : LoginIntent()
 	data object Register : LoginIntent()
+	data object Clear : LoginIntent()
 }
 
 data class ScreenState(
@@ -24,8 +25,10 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
 			is LoginIntent.EmailChanged -> updateEmail(intent.email)
 			is LoginIntent.PasswordChanged -> updatePassword(intent.password)
 			is LoginIntent.Register -> register()
+			is LoginIntent.Clear -> clear()
 		}
 	}
+
 
 	private fun updateEmail(email: String) {
 		_state.value = _state.value.copy(email = email)
@@ -39,6 +42,9 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
 		if (_state.value.password.isNotEmpty() && _state.value.email.isNotEmpty()) {
 			prefs.savePassword(_state.value.password)
 		}
+	}
+	private fun clear(){
+		prefs.clear()
 	}
 
 }
