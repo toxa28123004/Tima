@@ -21,6 +21,5 @@ class PreferenceManager(context: Context) {
 
 	companion object {
 		const val PASSWORD = "password"
-
 	}
 }

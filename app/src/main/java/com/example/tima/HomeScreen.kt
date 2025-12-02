@@ -1,6 +1,5 @@
 package com.example.tima
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,16 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 
 @Composable
 fun HomeScreen(
-	navController: NavController,
-	viewModel: MyViewModel
+	onClick: () -> Unit,
+	onClear:() -> Unit
 ) {
-	val activity = LocalActivity.current
 	Column(
 		modifier = Modifier
 			.fillMaxSize()
@@ -40,22 +38,20 @@ fun HomeScreen(
 			modifier = Modifier
 				.fillMaxWidth()
 				.padding(16.dp)
-				.clip(RoundedCornerShape(16.dp))
+				.clip(RoundedCornerShape(16.dp)),
+			contentScale = ContentScale.Crop
 		)
 		Column(
 			modifier = Modifier
 				.fillMaxWidth()
 		) {
-			ElevatedButton(onClick = { activity?.finish() }) {
+			ElevatedButton(onClick = { onClick() }) {
 				Text("выйти")
 
 			}
 			Spacer(modifier = Modifier.height(24.dp))
 			ElevatedButton(onClick = {
-				viewModel.onIntent(LoginIntent.Clear)
-				navController.navigate("login") {
-					popUpTo(0)
-				}
+				onClear()
 			}) {
 				Text("выйти из аккаунта")
 
