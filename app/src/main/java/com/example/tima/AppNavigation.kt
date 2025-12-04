@@ -12,51 +12,103 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tima.Screens.CharacterScreen
+import com.example.tima.Screens.HomeScreen
+import com.example.tima.Screens.LoginScreen
+import com.example.tima.Screens.ProfileScreen
+import com.example.tima.Screens.SettingsScreen
 
 
 @Composable
 fun AppNavigation() {
-	val context = LocalContext.current
-	val activity = LocalActivity.current
-	val focusManager = LocalFocusManager.current
-	val viewModel: MyViewModel = viewModel(factory = MyViewModelFactory(context))
-	val state by viewModel.state.collectAsState(initial = ScreenState())
-	val navController = rememberNavController()
-	val startDestination = remember(state.isRegistered) { if (state.isRegistered) "login" else "home" }
+    val context = LocalContext.current
+    val activity = LocalActivity.current
+    val focusManager = LocalFocusManager.current
+    val viewModel: MyViewModel = viewModel(factory = MyViewModelFactory(context))
+    val state by viewModel.state.collectAsState(initial = ScreenState())
+    val navController = rememberNavController()
+    val startDestination =
+        remember(state.isRegistered) { if (state.isRegistered) Routes.LOGIN else Routes.CHARACTER }
+    val icon = if (state.isVisualPassword) {
+        R.drawable.ic_open_eye
+    } else {
+        R.drawable.ic_closed_eye
+    }
 
-	LaunchedEffect(state.isNavigateToHome) {
-		navController.navigate("home") { popUpTo(0) }
-	}
 
-	NavHost(navController = navController, startDestination = startDestination) {
-		composable("login") {
-			LoginScreen(
-				visibleEmail = state.visibleEmail,
-				visiblePassword = state.visiblePassword,
-				focusManager = focusManager,
-				password = state.password,
-				email = state.email,
-				emailChanged = { email ->
-					viewModel.onIntent(LoginIntent.EmailChanged(email))
-				},
-				passwordChanged = {
-					viewModel.onIntent(LoginIntent.PasswordChanged(it))
-				},
-				register = {
-					viewModel.onIntent(LoginIntent.Register)
-				},
-			)
-		}
-		composable("home") {
-			HomeScreen(
-				onClick = { activity?.finish() },
-				onClear = {
-					viewModel.onIntent(LoginIntent.Clear)
-					navController.navigate("login") {
-						popUpTo(0)
-					}
-				},
-			)
-		}
-	}
+
+    LaunchedEffect(state.isNavigateToHome) {
+        navController.navigate(Routes.CHARACTER) { popUpTo(0) }
+    }
+
+
+    NavHost(navController = navController, startDestination = startDestination) {
+        composable(Routes.LOGIN) {
+            LoginScreen(
+                visibleEmail = state.visibleEmail,
+                visiblePassword = state.visiblePassword,
+                focusManager = focusManager,
+                password = state.password,
+                email = state.email,
+                emailChanged = { email ->
+                    viewModel.onIntent(ScreenIntent.EmailChanged(email))
+                },
+                passwordChanged = {
+                    viewModel.onIntent(ScreenIntent.PasswordChanged(it))
+                },
+                register = {
+                    viewModel.onIntent(ScreenIntent.Register)
+                },
+            )
+        }
+        composable(Routes.HOME) {
+            HomeScreen(
+                onClick = { activity?.finish() },
+                onClear = {
+                    viewModel.onIntent(ScreenIntent.Clear)
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0)
+                    }
+                },
+            )
+        }
+        composable(Routes.CHARACTER) {
+            CharacterScreen(
+                characters = state.characters,
+                isLoading = state.isLoading,
+                onClick = {
+                    navController.navigate(Routes.PROFILE)
+                    viewModel.onIntent(ScreenIntent.SaveCharacter(it))
+                },
+                navigate = { navController.navigate(Routes.SETTINGS) },
+                getData = {
+                    viewModel.onIntent(ScreenIntent.GetEmail)
+                    viewModel.onIntent(ScreenIntent.GetPassword)
+                },
+                navigateHome = {navController.navigate(Routes.HOME)}
+            )
+        }
+        composable(Routes.PROFILE) {
+            ProfileScreen(
+                result = state.person
+            )
+        }
+        composable(Routes.SETTINGS) {
+            SettingsScreen(
+                icon = icon,
+                onClick = { viewModel.onIntent(ScreenIntent.ReverseVisualPassword) },
+                password = state.password,
+                email = state.email,
+                isPasswordVisible = state.isVisualPassword,
+                exit = { activity?.finish() },
+                exitInProfile = {
+                    viewModel.onIntent(ScreenIntent.Clear)
+                    viewModel.onIntent(ScreenIntent.DataClear)
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0)
+                    }
+                },
+            )
+        }
+    }
 }

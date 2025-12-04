@@ -1,4 +1,4 @@
-package Models
+package com.example.tima.models
 
 
 enum class Status {
