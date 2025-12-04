@@ -19,22 +19,37 @@ object Routes {
 class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
     private val _state = MutableStateFlow(ScreenState())
     val state: StateFlow<ScreenState> = _state
+    private var hasMorePages = true
 
     init {
         checkLogin()
         loadCharacters()
     }
-
-    private fun loadCharacters() {
+    private fun loadCharacters(){
         viewModelScope.launch {
             try {
                 _state.value = _state.value.copy(isLoading = true)
-                val response: Characters = Retrofit.instance.getCharacter()
-                _state.value = _state.value.copy(characters = response.results)
+                val response: Characters = Retrofit.api.getCharacter(_state.value.currentPage1)
+                _state.value =
+                    _state.value.copy(characters =  response.results)
             } catch (e: Exception) {
                 println("Error: $e")
-            } finally {
+            }finally {
                 _state.value = _state.value.copy(isLoading = false)
+            }
+        }
+    }
+
+    private fun addCharacters() {
+        viewModelScope.launch {
+            try {
+                val response: Characters = Retrofit.api.getCharacter(_state.value.currentPage)
+                _state.value =
+                    _state.value.copy(characters = _state.value.characters + response.results)
+                hasMorePages = response.info.next != null
+                _state.value = _state.value.copy(currentPage = _state.value.currentPage + 1)
+            } catch (e: Exception) {
+                println("Error: $e")
             }
         }
     }
@@ -50,6 +65,7 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
             is ScreenIntent.GetEmail -> getEmail()
             is ScreenIntent.GetPassword -> getPassword()
             is ScreenIntent.DataClear -> clearFields()
+            is ScreenIntent.LoadCharacters -> addCharacters()
         }
     }
 

@@ -12,4 +12,6 @@ sealed class ScreenIntent {
     data object GetEmail : ScreenIntent()
     data object GetPassword : ScreenIntent()
     data object DataClear : ScreenIntent()
+    data object LoadCharacters : ScreenIntent()
+
 }

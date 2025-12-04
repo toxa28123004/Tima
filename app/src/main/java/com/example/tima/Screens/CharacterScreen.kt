@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -41,8 +41,8 @@ fun CharacterScreen(
     isLoading: Boolean,
     navigate: () -> Unit,
     getData: () -> Unit,
-    navigateHome:() -> Unit
-
+    navigateHome: () -> Unit,
+    loadCharacters: () -> Unit
 
 ) {
     if (isLoading) {
@@ -77,41 +77,51 @@ fun CharacterScreen(
                 })
         }) { paddingValues ->
             LazyColumn(contentPadding = paddingValues, modifier = Modifier) {
-                items(characters) { character ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .clickable(onClick = {
-                                onClick(character)
-                            }),
-                        shape = RoundedCornerShape(60.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFF00BCD4)
-                        ),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dp
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AsyncImage(
-                                model = character.image,
-                                contentDescription = "Character image",
-                                modifier = Modifier
-                                    .size(60.dp)
-                                    .clip(RoundedCornerShape(50.dp))
-                            )
-                            Text(character.name)
-                        }
+                itemsIndexed(characters) { index , character ->
+                 CharacterItem(
+                     character,
+                     onClick = { onClick(character) }
+                 )
+                    if (index == characters.lastIndex){
+                        loadCharacters()
                     }
                 }
             }
+        }
+    }
+}
+@Composable
+fun CharacterItem (
+    character: Result,
+    onClick:()-> Unit
+){
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable(onClick = {
+                onClick()
+            }),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF5B6C6E)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = character.image,
+                contentDescription = "Character image",
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(16.dp))
+            )
+            Text(character.name)
         }
     }
 }

@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import com.example.tima.R
 
 
 @Composable
@@ -41,15 +42,28 @@ fun SettingsScreen(
     isPasswordVisible: Boolean,
     exit: () -> Unit,
     exitInProfile: () -> Unit,
+    clickBack: () -> Unit
 
-    ) {
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(20.dp))
+        Row(
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(onClick = { clickBack() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = ""
+                )
+            }
+        }
         Card(
             Modifier
                 .fillMaxWidth()
@@ -60,10 +74,15 @@ fun SettingsScreen(
         ) {
             Box(
                 Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize()
+                    .padding(start = 16.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
-                Text(email)
+                Row {
+                    Text("email:", color = Color.Cyan)
+                    Text(text = email)
+                }
+
             }
         }
         Card(
@@ -76,12 +95,21 @@ fun SettingsScreen(
             Box(
                 Modifier
                     .fillMaxWidth()
+                    .padding(start = 16.dp)
                     .height(50.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.CenterStart
             ) {
-                Text(
-                    text = if (isPasswordVisible) password else "*".repeat(password.length)
-                )
+                Row {
+                    Text("password:", color = Color.Cyan)
+                    Text(
+                        text =
+                            if (isPasswordVisible) password else " * ".repeat(
+                                password.length
+                            )
+
+                    )
+                }
+
                 Row(
                     Modifier
                         .fillMaxWidth(),

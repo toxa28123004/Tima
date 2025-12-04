@@ -14,5 +14,9 @@ data class ScreenState(
     val person: Result? = null,
     val isLoading: Boolean = false,
     val isVisualPassword: Boolean = false,
-    val savePassword: String = ""
+    val savePassword: String = "",
+    val currentPage1: Int = 1,
+    val currentPage: Int = 2,
+    val hasMorePages: Boolean = true
+
 )

@@ -34,12 +34,14 @@ fun AppNavigation() {
     } else {
         R.drawable.ic_closed_eye
     }
+    val clickBack: () -> Unit = { navController.navigateUp() }
 
 
 
     LaunchedEffect(state.isNavigateToHome) {
         navController.navigate(Routes.CHARACTER) { popUpTo(0) }
     }
+
 
 
     NavHost(navController = navController, startDestination = startDestination) {
@@ -63,13 +65,7 @@ fun AppNavigation() {
         }
         composable(Routes.HOME) {
             HomeScreen(
-                onClick = { activity?.finish() },
-                onClear = {
-                    viewModel.onIntent(ScreenIntent.Clear)
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo(0)
-                    }
-                },
+                clickBack = clickBack,
             )
         }
         composable(Routes.CHARACTER) {
@@ -85,13 +81,16 @@ fun AppNavigation() {
                     viewModel.onIntent(ScreenIntent.GetEmail)
                     viewModel.onIntent(ScreenIntent.GetPassword)
                 },
-                navigateHome = {navController.navigate(Routes.HOME)}
+                navigateHome = { navController.navigate(Routes.HOME) },
+                loadCharacters = {viewModel.onIntent(ScreenIntent.LoadCharacters)}
             )
         }
         composable(Routes.PROFILE) {
             ProfileScreen(
-                result = state.person
-            )
+                result = state.person,
+                clickBack = clickBack,
+
+                )
         }
         composable(Routes.SETTINGS) {
             SettingsScreen(
@@ -108,7 +107,9 @@ fun AppNavigation() {
                         popUpTo(0)
                     }
                 },
-            )
+                clickBack = clickBack,
+
+                )
         }
     }
 }
