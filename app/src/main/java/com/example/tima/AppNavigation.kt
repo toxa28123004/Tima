@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tima.Screens.ChangePassword
 import com.example.tima.Screens.CharacterScreen
 import com.example.tima.Screens.HomeScreen
 import com.example.tima.Screens.LoginScreen
@@ -53,10 +54,10 @@ fun AppNavigation() {
                 password = state.password,
                 email = state.email,
                 emailChanged = { email ->
-                    viewModel.onIntent(ScreenIntent.EmailChanged(email))
+                    viewModel.onIntent(ScreenIntent.EmailSave(email))
                 },
                 passwordChanged = {
-                    viewModel.onIntent(ScreenIntent.PasswordChanged(it))
+                    viewModel.onIntent(ScreenIntent.PasswordSave(it))
                 },
                 register = {
                     viewModel.onIntent(ScreenIntent.Register)
@@ -82,7 +83,7 @@ fun AppNavigation() {
                     viewModel.onIntent(ScreenIntent.GetPassword)
                 },
                 navigateHome = { navController.navigate(Routes.HOME) },
-                loadCharacters = {viewModel.onIntent(ScreenIntent.LoadCharacters)}
+                loadCharacters = { viewModel.onIntent(ScreenIntent.LoadCharacters) }
             )
         }
         composable(Routes.PROFILE) {
@@ -108,8 +109,45 @@ fun AppNavigation() {
                     }
                 },
                 clickBack = clickBack,
+                navigateToChangePassword = {
+                    navController.navigate(Routes.CHANGE_PASSWORD)
+                }
 
-                )
+            )
+        }
+        composable(Routes.CHANGE_PASSWORD) {
+            ChangePassword(
+                passwordChanged = {
+                    viewModel.onIntent(ScreenIntent.ChangePassword(it))
+                },
+                passwordChanged1 = {
+                    viewModel.onIntent(ScreenIntent.ChangePassword1(it))
+                },
+                newPassword = state.newPassword,
+                saveNewPassword = {
+                    if (state.password == state.oldPassword) {
+                        println("### ktc")
+                        if (state.newPassword == state.newPassword1 && state.newPassword1.isNotEmpty()) {
+                            viewModel.onIntent(ScreenIntent.SaveNewPassword)
+                            clickBack()
+                        } else {
+                            println("### hui")
+                            viewModel.onIntent(ScreenIntent.CheckEquallyNewPasswords)
+                        }
+                    } else {
+                        viewModel.onIntent(ScreenIntent.CheckEmptyOldPassword)
+                    }
+
+                },
+                newPassword1 = state.newPassword1,
+                checkPassword = {
+                    viewModel.onIntent(ScreenIntent.CheckPassword(it))
+                },
+                oldPassword = state.oldPassword,
+                visiblePassword = state.visiblePassword,
+                visibleNewPassword = state.visibleNewPassword,
+                clickBack = clickBack,
+            )
         }
     }
 }

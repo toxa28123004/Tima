@@ -42,7 +42,8 @@ fun SettingsScreen(
     isPasswordVisible: Boolean,
     exit: () -> Unit,
     exitInProfile: () -> Unit,
-    clickBack: () -> Unit
+    clickBack: () -> Unit,
+    navigateToChangePassword: () -> Unit
 
 ) {
     Column(
@@ -79,7 +80,7 @@ fun SettingsScreen(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row {
-                    Text("email:", color = Color.Cyan)
+                    Text("имя:", color = Color.Cyan)
                     Text(text = email)
                 }
 
@@ -100,13 +101,10 @@ fun SettingsScreen(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row {
-                    Text("password:", color = Color.Cyan)
+                    Text("волшебное слово:", color = Color.Cyan)
                     Text(
                         text =
-                            if (isPasswordVisible) password else " * ".repeat(
-                                password.length
-                            )
-
+                            if (isPasswordVisible) password else " * ".repeat(password.length)
                     )
                 }
 
@@ -116,7 +114,6 @@ fun SettingsScreen(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     IconButton(onClick = onClick) {
                         Icon(
                             painter = painterResource(icon),
@@ -126,18 +123,29 @@ fun SettingsScreen(
                     }
                 }
             }
-
         }
         Spacer(modifier = Modifier.height(24.dp))
-        ElevatedButton(onClick = { exit() }) {
-            Text("выйти")
-
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        ElevatedButton(onClick = {
-            exitInProfile()
-        }) {
-            Text("выйти из аккаунта")
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            ElevatedButton(onClick = {
+                navigateToChangePassword()
+            }) {
+                Text("изменить волшебное слово")
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            ElevatedButton(onClick = {
+                exitInProfile()
+            }) {
+                Text("выйти из аккаунта")
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            ElevatedButton(onClick = { exit() }) {
+                Text("выйти")
+            }
         }
     }
 }

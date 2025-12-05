@@ -17,6 +17,11 @@ data class ScreenState(
     val savePassword: String = "",
     val currentPage1: Int = 1,
     val currentPage: Int = 2,
-    val hasMorePages: Boolean = true
+    val hasMorePages: Boolean = true,
+    val newPassword: String = "",
+    val newPassword1: String = "",
+    val oldPassword: String = "",
+    val visibleNewPassword: Boolean = false,
 
-)
+
+    )

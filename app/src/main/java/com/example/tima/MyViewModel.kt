@@ -14,6 +14,7 @@ object Routes {
     const val PROFILE = "profile"
     const val SETTINGS = "setting"
     const val LOGIN = "login"
+    const val CHANGE_PASSWORD = "changePassword"
 }
 
 class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
@@ -25,20 +26,22 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
         checkLogin()
         loadCharacters()
     }
-    private fun loadCharacters(){
+
+    private fun loadCharacters() {
         viewModelScope.launch {
             try {
                 _state.value = _state.value.copy(isLoading = true)
                 val response: Characters = Retrofit.api.getCharacter(_state.value.currentPage1)
                 _state.value =
-                    _state.value.copy(characters =  response.results)
+                    _state.value.copy(characters = response.results)
             } catch (e: Exception) {
                 println("Error: $e")
-            }finally {
+            } finally {
                 _state.value = _state.value.copy(isLoading = false)
             }
         }
     }
+
     private fun addCharacters() {
         viewModelScope.launch {
             try {
@@ -55,8 +58,8 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
 
     fun onIntent(intent: ScreenIntent) {
         when (intent) {
-            is ScreenIntent.EmailChanged -> updateEmail(intent.email)
-            is ScreenIntent.PasswordChanged -> updatePassword(intent.password)
+            is ScreenIntent.EmailSave -> updateEmail(intent.email)
+            is ScreenIntent.PasswordSave -> updatePassword(intent.password)
             is ScreenIntent.Register -> register()
             is ScreenIntent.Clear -> clear()
             is ScreenIntent.SaveCharacter -> saveCharacter(intent.result)
@@ -65,6 +68,12 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
             is ScreenIntent.GetPassword -> getPassword()
             is ScreenIntent.DataClear -> clearFields()
             is ScreenIntent.LoadCharacters -> addCharacters()
+            is ScreenIntent.ChangePassword -> changePassword(intent.newPassword)
+            is ScreenIntent.SaveNewPassword -> saveNewPassword()
+            is ScreenIntent.ChangePassword1 -> changePassword1(intent.newPassword1)
+            is ScreenIntent.CheckPassword -> checkPassword(intent.checkPassword)
+            is ScreenIntent.CheckEmptyOldPassword -> checkEmptyOldPassword()
+            is ScreenIntent.CheckEquallyNewPasswords -> checkEquallyNewPasswords()
         }
     }
 
@@ -78,7 +87,6 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
     }
 
     private fun updateEmail(email: String) {
-        println("### UPDATE EMAIL = $email")
         _state.value = _state.value.copy(email = email, visibleEmail = email.isEmpty())
     }
 
@@ -111,6 +119,14 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
         _state.value = _state.value.copy(email = "", password = "")
     }
 
+    private fun clearChangeFields() {
+        _state.value = _state.value.copy(
+            oldPassword = "",
+            newPassword = "",
+            newPassword1 = ""
+        )
+    }
+
     private fun clear() = prefs.clear()
 
     private fun reverseVisualPassword() {
@@ -125,6 +141,39 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
     private fun getEmail() {
         val saveEmail = prefs.getEmail()
         _state.value = _state.value.copy(email = saveEmail ?: "")
+    }
+
+    private fun changePassword(newPassword: String) {
+        _state.value = _state.value.copy(newPassword = newPassword)
+    }
+
+    private fun changePassword1(newPassword1: String) {
+        _state.value = _state.value.copy(newPassword1 = newPassword1)
+    }
+
+    private fun checkPassword(checkPassword: String) {
+        _state.value = _state.value.copy(oldPassword = checkPassword)
+    }
+
+    private fun saveNewPassword() {
+        _state.value = _state.value.copy(password = _state.value.newPassword)
+        prefs.savePassword(_state.value.password)
+        clearChangeFields()
+    }
+
+    private fun checkEmptyOldPassword() {
+        val visiblePassword = _state.value.oldPassword.isEmpty()
+        showPassword(visiblePassword)
+    }
+
+    private fun checkEquallyNewPasswords() {
+        val visibleNewPassword =
+            _state.value.newPassword != _state.value.newPassword1 || _state.value.newPassword1.isEmpty()
+        showNewPassword(visibleNewPassword)
+    }
+
+    private fun showNewPassword(show: Boolean) {
+        _state.value = _state.value.copy(visibleNewPassword = show)
     }
 
 }

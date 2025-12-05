@@ -54,7 +54,7 @@ fun LoginScreen(
             onValueChange = { email ->
                 emailChanged(email)
             },
-            label = { Text("введите Email") },
+            label = { Text("введите имя") },
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
@@ -62,7 +62,7 @@ fun LoginScreen(
         )
 
         if (visibleEmail) {
-            Text("заполните Email!!!")
+            Text("заполни блять имя!!!")
         }
         Spacer(modifier = Modifier.height(24.dp))
         TextField(
@@ -74,7 +74,7 @@ fun LoginScreen(
             onValueChange = { password ->
                 passwordChanged(password)
             },
-            label = { Text("введите пароль") },
+            label = { Text("введите волшебное слово") },
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
@@ -85,7 +85,7 @@ fun LoginScreen(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Text("ПАРОЛЬ!!!")
+            Text("волшебное слово!!!")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
