@@ -127,6 +127,7 @@ fun AppNavigation() {
                 saveNewPassword = {
                     if (state.password == state.oldPassword) {
                         println("### ktc")
+                        viewModel.onIntent(ScreenIntent.CheckEmptyOldPassword)
                         if (state.newPassword == state.newPassword1 && state.newPassword1.isNotEmpty()) {
                             viewModel.onIntent(ScreenIntent.SaveNewPassword)
                             clickBack()
@@ -135,6 +136,7 @@ fun AppNavigation() {
                             viewModel.onIntent(ScreenIntent.CheckEquallyNewPasswords)
                         }
                     } else {
+                        println("### lev")
                         viewModel.onIntent(ScreenIntent.CheckEmptyOldPassword)
                     }
 

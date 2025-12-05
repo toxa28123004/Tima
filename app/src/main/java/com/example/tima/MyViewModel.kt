@@ -162,7 +162,8 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
     }
 
     private fun checkEmptyOldPassword() {
-        val visiblePassword = _state.value.oldPassword.isEmpty()
+        val visiblePassword =
+            _state.value.oldPassword.isEmpty() || _state.value.password != _state.value.oldPassword
         showPassword(visiblePassword)
     }
 
