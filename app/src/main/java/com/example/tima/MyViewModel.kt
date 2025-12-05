@@ -39,7 +39,6 @@ class MyViewModel(private val prefs: PreferenceManager) : ViewModel() {
             }
         }
     }
-
     private fun addCharacters() {
         viewModelScope.launch {
             try {
